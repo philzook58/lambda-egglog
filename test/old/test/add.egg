@@ -1,0 +1,29 @@
+(function a () Int)
+(function b () Int)
+(function c () Int)
+(function d () Int)
+(function zero () Int)
+
+;(function + (Int Int) Int)
+(function add (Int Int) Int)
+(function e () Int)
+(union e (add b (add c d)))
+print
+
+(rewrite (add x y) (add y x))
+(rewrite (add zero y) (y))
+
+(rewrite (add x (add y z)) (add (add x y) z))
+;(rewrite (+ (+ a b) c) (+ a (+ b c)))
+
+;(rewrite "forall (x : int) y. x + y = y + x")
+;(rewrite "forall (x : int) y z. (x + y) + z = x + (y + z)")
+
+;(union (lambda ((x Int)) x)  (lambda ((x Int)) a))
+(union a (add zero (add zero (add zero c))))
+(run 5)
+print
+(run 5)
+print
+
+;(parse "(fun x. x 42 + 1)")

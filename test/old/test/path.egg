@@ -1,0 +1,40 @@
+(relation path (Int Int))
+(relation edge (Int Int))
+
+print
+
+(assert (edge 1 2))
+(assert (edge 2 3))
+
+print
+
+clear 
+
+(function foo (Int) Int)
+(function a () Int)
+
+print 
+
+(union (foo (foo (foo a))) (a))
+
+print 
+
+(extract (foo (foo (foo a))))
+
+(union (foo a) a)
+print
+(run 1)
+print
+
+
+(rewrite (foo (foo a)) a)
+(run 1)
+print
+;(rule ((edge x y)) ((path x y)))
+;(rule ((edge x y) (path y z)) ((path x z)))
+
+
+(union (lambda ((x Int)) a) (lambda ((y Int)) y))
+(union (lambda ((x Int) (y Int)) x) (lambda ((y Int) (y Int)) y))
+(run 1)
+print 

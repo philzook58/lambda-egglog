@@ -1,0 +1,10 @@
+(menhir
+ (modules parser))
+
+(ocamllex lexer)
+
+(library
+ (name lambda_egglog)
+ (libraries logtk logtk.parsers sexplib str)
+ (preprocess
+  (pps ppx_sexp_conv)))

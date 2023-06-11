@@ -1,0 +1,36 @@
+(union (foo a) a)
+(union (foo (foo a)) a)
+print
+clear
+
+(union (foo (foo a)) a)
+(union (foo a) a)
+(run 1)
+print
+clear
+
+(union (foo (foo a)) a)
+(union (foo (foo (foo a))) a)
+(run 1)
+print
+(match (foo (foo ?a)))
+clear
+
+
+(union (foo (foo (foo a))) a)
+(run 1)
+print
+(match (foo ?a))
+clear
+
+;(union (+ x y) (+ y x))
+;(union (+ x (+ y z)) (+ (+ x y) z))
+
+(union (+ (+ (+ x y) z) w) t)
+(rewrite (+ ?x ?y) (+ ?y ?x))
+(rewrite (+ ?x (+ ?y ?z)) (+ (+ ?x ?y) ?z))
+print
+(run 1)
+print
+(match (+ ?x ?y))
+clear

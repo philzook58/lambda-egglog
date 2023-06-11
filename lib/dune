@@ -1,0 +1,5 @@
+(library
+ (libraries sexplib)
+ (name lambda_egglog)
+ (preprocess
+  (pps ppx_jane)))

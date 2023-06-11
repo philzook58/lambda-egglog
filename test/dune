@@ -1,0 +1,4 @@
+(test
+ (name lambda_egglog))
+
+(data_only_dirs old)

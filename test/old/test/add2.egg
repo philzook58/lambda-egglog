@@ -1,0 +1,22 @@
+(declare a "int")
+(declare b "int")
+(declare c "int")
+(declare d "int")
+
+;(function + (Int Int) Int)
+
+;(function e () Int)
+(union "a" "b")
+print
+
+;(rewrite (+ a b) (+ b a))
+;(rewrite (+ a (+ b c)) (+ (+ a b) c))
+;(rewrite (+ (+ a b) c) (+ a (+ b c)))
+
+(rewrite "forall (x : int) y. x + y = y + x")
+(rewrite "forall (x : int) y z. (x + y) + z = x + (y + z)")
+
+(run 5)
+print
+
+;(parse "(fun x. x 42 + 1)")

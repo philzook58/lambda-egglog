@@ -1,0 +1,22 @@
+(executable
+ (public_name lambda_egglog)
+ (name main)
+ (modules main)
+ (libraries lambda_egglog))
+
+(executable
+ (public_name lambda_egglog_basic)
+ (name basic)
+ (modules basic)
+ (libraries lambda_egglog)
+ (preprocess
+  (pps ppx_jane)))
+
+(executable
+ ;(public_name lambda_egglog_js)
+ (name main_js)
+ (modules main_js)
+ (libraries lambda_egglog)
+ (modes js)
+ (preprocess
+  (pps js_of_ocaml-ppx)))

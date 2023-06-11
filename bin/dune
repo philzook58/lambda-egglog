@@ -1,0 +1,6 @@
+(executable
+ (public_name lambda_egglog)
+ (name main)
+ (libraries lambda_egglog)
+ (preprocess
+  (pps ppx_jane)))
