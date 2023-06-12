@@ -5,6 +5,7 @@ let equal_string = String.equal
 
 type term = Const of string | App of term * term | Var of string
 [@@deriving sexp_of, compare, equal]
+
 type t = term
 
 let rec subterm sub t = equal_term sub t || strict_subterm sub t
@@ -71,7 +72,6 @@ module Term = struct
   let compare = compare_term
 end
 
-module StringMap = Map.Make (String)
 module TermMap = Map.Make (Term)
 module TermSet = Set.Make (Term)
 (* Apply term * term  ?? *)
@@ -81,6 +81,9 @@ module Trie = struct
   (* type token = App | Const of string  *)
   type token = string option
   type key = token list
+
+  module StringMap = Map.Make (String)
+
   type 'a t = { value : 'a option; app : 'a t option; const : 'a t StringMap.t }
 
   let empty = { value = None; app = None; const = StringMap.empty }
@@ -135,4 +138,59 @@ let rec ground_kbo t1 t2 =
         if Int.equal cf 0 then ground_kbo args1 args2 else cf
     | Var _, _ | _, Var _ -> failwith "ground kbo does not support var"
   else Int.compare s1 s2
+
 let true_ = Const "true"
+
+(* https://www.lri.fr/~filliatr/ftp/publis/hash-consing2.pdf *)
+
+module HTerm = struct
+  type hterm = term_node Hashcons.hash_consed
+  (* Might want to copy over the hashcons lib so we can tuck extra metadata in the nodes. *)
+  (* { tag : int; node : term_node; hkey : int } *)
+
+  and term_node = Var of string | Const of string | App of hterm * hterm
+
+  let equal_term (x : hterm) (y : hterm) = Int.equal x.tag y.tag
+  let compare_term (x : hterm) (y : hterm) = Int.compare x.tag y.tag
+
+  module T = struct
+    type t = term_node
+
+    let equal x y =
+      match (x, y) with
+      | Var s, Var s' | Const s, Const s' -> String.equal s s'
+      | App (f, x), App (f', x') -> equal_term f f' && equal_term x x'
+      | _, _ -> false
+
+    let hash = function
+      | Var s -> Hashtbl.hash s
+      | Const s -> Hashtbl.hash s + 1
+      | App (f, x) -> (19 * ((19 * f.hkey) + x.hkey)) + 2
+  end
+
+  module Hterm = Hashcons.Make (T)
+
+  let ht = Hterm.create 251
+  let var n = Hterm.hashcons ht (Var n)
+  let const u = Hterm.hashcons ht (Const u)
+  let app u v = Hterm.hashcons ht (App (u, v))
+
+  module Set = Hashcons.Hset
+  module Map = Hashcons.Hmap
+
+  let rec of_term : term -> hterm = function
+    | Const s -> const s
+    | Var s -> var s
+    | App (f, x) -> app (of_term f) (of_term x)
+end
+
+(* Move term down here so we can put hterm inside of term? *)
+
+(* Generic Join translated to trees *)
+(*
+   module Subst = struct
+     type 'a t =
+       { pat : term ; value TermMap.t  }
+   end
+*)
+(* HashConsed hash joins *)

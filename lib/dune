@@ -1,5 +1,5 @@
 (library
- (libraries sexplib)
+ (libraries sexplib hashcons)
  (name lambda_egglog)
  (preprocess
   (pps ppx_jane)))

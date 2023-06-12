@@ -1,4 +1,5 @@
 open Term
+
 type egraph = term TermMap.t
 
 let pp_egraph ppf (m : egraph) =
@@ -69,14 +70,15 @@ let ematch e pat t : subst list =
         if String.equal x y || equal_term (find e pat) (find e t) then [ subst ]
         else []
     | App (f, x), App (f2, x2) -> (
+        (* Boring case that occurs in ordinary matching *)
         List.concat_map (fun subst -> worker x x2 subst) (worker f f2 subst)
         @
+        (* Interesting case where we match via a simplification rule *)
         match TermMap.find_opt t eclass with
         | None -> []
-        | Some enodes ->
-            List.concat_map
-              (fun t -> worker pat t subst)
-              enodes (* The kbo order mght protect us here *))
+        | Some enodes -> List.concat_map (fun t -> worker pat t subst) enodes
+        (* The kbo order mght protect us here. Naively this looks like an infinite loop *)
+        )
     | _, Var _ -> failwith "ematch does not support Var in term"
     | Var x, _ -> (
         match List.assoc_opt x subst with
@@ -207,4 +209,3 @@ let canon e =
     if TermMap.equal equal_term e e' then e else worker e'
   in
   worker e
-
